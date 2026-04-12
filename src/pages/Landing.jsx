@@ -606,6 +606,12 @@ const filteredProducts = useMemo(() => {
             </div>
           </div>
         </div>
+
+        <div className="text-center">
+        <p className="mt-4 text-center text-xs text-blue-200 opacity-80">
+  © 2026 Solutions Tech - Todos los derechos reservados
+</p>
+</div>
       </footer>
 
     {whatsappNumber ? (
