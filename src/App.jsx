@@ -17,7 +17,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/panel/login" element={<Login />} />
+      <Route path="/panel-login-admin-privado-2026" element={<Login />} />
 
       <Route
         path="/panel"
