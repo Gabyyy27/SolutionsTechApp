@@ -548,7 +548,10 @@ const filteredProducts = useMemo(() => {
             <div id="contacto" className="rounded-3xl bg-[#1a2744] p-6 text-white">
               <h3 className="text-2xl font-bold">¿Listo para cotizar?</h3>
               <p className="mt-3 text-blue-100">
-                Contactanos por WhatsApp y te ayudamos con productos, reparación, desarrollo de sitios web o impresiones personalizadas.
+               En Solutions Tech ofrecemos servicios de reparación de celulares,
+    diseño e impresión de material publicitario y desarrollo de páginas web modernas.
+    Trabajamos con clientes en toda Honduras brindando soluciones rápidas,
+    accesibles y profesionales.
               </p>
 
               <a
