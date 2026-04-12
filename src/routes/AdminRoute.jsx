@@ -73,7 +73,7 @@ function AdminRoute({ children }) {
     profile.activo === true
 
   if (!isAdmin) {
-    return <Navigate to="/panel/login" replace />
+    return <Navigate to="/panel-login-admin-privado-2026" replace />
   }
 
   return children

@@ -156,6 +156,9 @@ function Login() {
         >
           Volver al sitio web
         </button>
+        <p className="mt-4 text-xs text-slate-400 text-center">
+        Este es un panel administrativo privado. Nunca compartimos tu información.
+        </p>
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-slate-400">
           Solutions Tech © {new Date().getFullYear()}
