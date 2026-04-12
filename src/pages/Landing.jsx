@@ -355,7 +355,7 @@ const filteredProducts = useMemo(() => {
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-[#1a2744]">Productos</h2>
             <p className="mt-2 text-slate-500">
-              Descubre algunos de nuestros productos disponibles.
+              Descubre nuestros productos disponibles.
             </p>
           </div>
           
@@ -434,7 +434,7 @@ const filteredProducts = useMemo(() => {
                       className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1a2744] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#24365f]"
                     >
                       <FaWhatsapp size={18} />
-                      Consultar por WhatsApp
+                      Pedir por WhatsApp
                     </a>
                   </div>
                 </div>
@@ -448,7 +448,7 @@ const filteredProducts = useMemo(() => {
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-[#1a2744]">Servicios</h2>
               <p className="mt-2 text-slate-500">
-                Soluciones personalizadas para tu negocio y tus equipos.
+                Soluciones personalizadas para ti y tu negocio.
               </p>
             </div>
 
@@ -538,7 +538,7 @@ const filteredProducts = useMemo(() => {
                 <div>
                 <p className="font-semibold text-slate-900">Envíos</p>
                 <p className="text-slate-600">
-                 Realizamos envíos a nivel nacional
+                  Realizamos envíos a nivel nacional
                 </p>
                </div>
               </div>
@@ -548,7 +548,7 @@ const filteredProducts = useMemo(() => {
             <div id="contacto" className="rounded-3xl bg-[#1a2744] p-6 text-white">
               <h3 className="text-2xl font-bold">¿Listo para cotizar?</h3>
               <p className="mt-3 text-blue-100">
-                Escríbenos por WhatsApp y te ayudamos con productos, reparación o impresiones personalizadas.
+                Contactanos por WhatsApp y te ayudamos con productos, reparación, desarrollo de sitios web o impresiones personalizadas.
               </p>
 
               <a
