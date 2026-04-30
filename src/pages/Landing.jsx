@@ -450,7 +450,7 @@ const filteredProducts = useMemo(() => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-5 sm:grid-cols-2 xl:grid-cols-5">
               {serviceCards.map((service, index) => (
                 <div
                   key={index}
@@ -470,7 +470,7 @@ const filteredProducts = useMemo(() => {
                     )}
                   </div>
 
-                  <div className="p-5">
+                  <div className="flex flex-col justify-between flex-1 p-3 md:p-5">
                     <h3 className="min-h-[72px] text-base font-bold text-slate-900">
                       {service.nombre}
                     </h3>
@@ -481,8 +481,8 @@ const filteredProducts = useMemo(() => {
                       rel="noreferrer"
                       className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#3b5bdb] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
                     >
-                      <FaWhatsapp size={18} />
-                      Cotizar servicio
+                      <FaWhatsapp size={14} />
+<span className="text-xs md:text-sm">Cotizar Servicio</span>
                     </a>
                   </div>
                 </div>
