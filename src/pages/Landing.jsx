@@ -396,11 +396,11 @@ const filteredProducts = useMemo(() => {
           
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+           <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {filteredProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="aspect-[4/3] bg-slate-100">
                     {product.imagen_url ? (
@@ -416,11 +416,11 @@ const filteredProducts = useMemo(() => {
                     )}
                   </div>
 
-                  <div className="p-5">
+                 <div className="flex flex-col flex-1 p-5">
                     <p className="text-sm text-slate-500">
                       {product.categories?.nombre || 'Sin categoría'}
                     </p>
-                    <h3 className="mt-1 text-lg font-bold text-slate-900">
+                   <h3 className="mt-1 text-lg font-bold text-slate-900 line-clamp-2 min-h-[3rem]">
                       {product.nombre}
                     </h3>
                     <p className="mt-2 text-2xl font-extrabold text-[#3b5bdb]">
@@ -431,7 +431,7 @@ const filteredProducts = useMemo(() => {
                       href={productWhatsAppLink(product.nombre)}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1a2744] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#24365f]"
+                      className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1a2744] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#24365f]"
                     >
                       <FaWhatsapp size={18} />
                       Pedir por WhatsApp
