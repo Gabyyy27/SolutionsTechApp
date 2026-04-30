@@ -416,13 +416,11 @@ const filteredProducts = useMemo(() => {
                     )}
                   </div>
 
-                 <div className="flex flex-col flex-1 p-5">
+                 <div className="flex flex-col justify-between flex-1 p-3 md:p-5">
                     <p className="text-sm text-slate-500">
                       {product.categories?.nombre || 'Sin categoría'}
                     </p>
-                   <h3 className="mt-1 text-lg font-bold text-slate-900 line-clamp-2 min-h-[3rem]">
-                      {product.nombre}
-                    </h3>
+                  <h3 className="mt-1 text-sm font-bold text-slate-900 leading-tight min-h-[3rem]">{product.nombre}</h3>
                     <p className="mt-2 text-2xl font-extrabold text-[#3b5bdb]">
                       {formatCurrency(product.precio)}
                     </p>
@@ -431,10 +429,10 @@ const filteredProducts = useMemo(() => {
                       href={productWhatsAppLink(product.nombre)}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1a2744] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#24365f]"
+                      className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1a2744] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#24365f]"
                     >
-                      <FaWhatsapp size={18} />
-                      Pedir por WhatsApp
+                     <FaWhatsapp size={14} />
+<span className="text-xs md:text-sm">Pedir por WhatsApp</span>
                     </a>
                   </div>
                 </div>
