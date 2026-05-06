@@ -120,25 +120,23 @@ export async function createPartnerMovement(movement) {
   return data
 }
 
+// ── trabajos ya NO se trae aquí ──────────────────────────────────────
 export async function getFinancialSources() {
-  const [transactionsRes, trabajosRes, partnersRes, gastosRes, movementsRes] =
+  const [transactionsRes, partnersRes, gastosRes, movementsRes] =
     await Promise.all([
       supabase.from('transactions').select('*'),
-      supabase.from('trabajos').select('*'),
       supabase.from('partners').select('*'),
       supabase.from('gastos').select('*'),
       supabase.from('partner_movements').select('*'),
     ])
 
   if (transactionsRes.error) throw transactionsRes.error
-  if (trabajosRes.error) throw trabajosRes.error
   if (partnersRes.error) throw partnersRes.error
   if (gastosRes.error) throw gastosRes.error
   if (movementsRes.error) throw movementsRes.error
 
   return {
     transactions: transactionsRes.data || [],
-    trabajos: trabajosRes.data || [],
     partners: partnersRes.data || [],
     gastos: gastosRes.data || [],
     movements: movementsRes.data || [],
@@ -147,30 +145,25 @@ export async function getFinancialSources() {
 
 export function calculateSociosData({
   transactions,
-  trabajos,
   partners,
   gastos,
   movements,
 }) {
-  const gananciasVentas = transactions.reduce(
-    (acc, item) => acc + Number(item.ganancia || 0),
-    0
+  // ── Solo ganancias de ventas ─────────────────────────────────────
+  const gananciaNetaTotal = transactions.reduce(
+    (acc, item) => acc + Number(item.ganancia || 0), 0
   )
 
-  const gananciasTrabajos = trabajos.reduce(
-    (acc, item) => acc + Number(item.ganancia || 0),
-    0
-  )
-
-  const gananciaNetaTotal = gananciasVentas + gananciasTrabajos
-
+  // ── 60% reinversión / 40% ganancias socios ───────────────────────
   const fondoReinversionBruto = gananciaNetaTotal * 0.6
-  const fondoGananciasBruto = gananciaNetaTotal * 0.4
-  const fondoAportacionesBruto = partners.reduce(
-    (acc, item) => acc + Number(item.aportacion_capital || 0),
-    0
+  const fondoGananciasBruto   = gananciaNetaTotal * 0.4
+
+  // ── Fondo aportaciones: capital de socios, separado ──────────────
+  const totalAportado = partners.reduce(
+    (acc, item) => acc + Number(item.aportacion_capital || 0), 0
   )
 
+  // ── Gastos por fondo ─────────────────────────────────────────────
   const gastosReinversion = gastos
     .filter((g) => g.fondo === 'reinversion')
     .reduce((acc, g) => acc + Number(g.monto || 0), 0)
@@ -183,84 +176,65 @@ export function calculateSociosData({
     .filter((g) => g.fondo === 'ganancias')
     .reduce((acc, g) => acc + Number(g.monto || 0), 0)
 
-  const fondoReinversion = fondoReinversionBruto - gastosReinversion
-  const fondoAportaciones = fondoAportacionesBruto - gastosAportaciones
-  const fondoGanancias = fondoGananciasBruto - gastosGanancias
+  // ── Fondos netos ─────────────────────────────────────────────────
+  const fondoReinversion  = fondoReinversionBruto - gastosReinversion
+  const fondoAportaciones = totalAportado         - gastosAportaciones
+  const fondoGanancias    = fondoGananciasBruto   - gastosGanancias
 
-  const partnerRows = partners.map((partner) => {
+  // ── Clasificación ────────────────────────────────────────────────
+  const operativistas  = partners.filter((p) => p.rol === 'operativista')
+  const inversionistas = partners.filter((p) => p.rol === 'inversionista')
+
+  const totalCapitalInversionistas = inversionistas.reduce(
+    (acc, p) => acc + Number(p.aportacion_capital || 0), 0
+  )
+
+  // ── Cálculo por socio ────────────────────────────────────────────
+  const sociosCalculados = partners.map((partner) => {
     const fechaIngreso = new Date(partner.fecha_ingreso)
 
-    const gananciasDesdeIngresoVentas = transactions
+    // Ganancias de ventas desde que ingresó este socio
+    const gananciasDesdeIngreso = transactions
       .filter((tx) => new Date(tx.transaction_date) >= fechaIngreso)
       .reduce((acc, tx) => acc + Number(tx.ganancia || 0), 0)
 
-    const gananciasDesdeIngresoTrabajos = trabajos
-      .filter((tr) => new Date(tr.fecha_creacion) >= fechaIngreso)
-      .reduce((acc, tr) => acc + Number(tr.ganancia || 0), 0)
-
-    const gananciasDesdeIngreso =
-      gananciasDesdeIngresoVentas + gananciasDesdeIngresoTrabajos
-
     const fondoGananciasDesdeIngreso = gananciasDesdeIngreso * 0.4
-    const reinversionDesdeIngreso = gananciasDesdeIngreso * 0.6
+    const reinversionDesdeIngreso    = gananciasDesdeIngreso * 0.6
 
-    return {
-      ...partner,
-      gananciasDesdeIngreso,
-      fondoGananciasDesdeIngreso,
-      reinversionDesdeIngreso,
-    }
-  })
-
-  const operativistas = partnerRows.filter((p) => p.rol === 'operativista')
-  const inversionistas = partnerRows.filter((p) => p.rol === 'inversionista')
-
-  const mitadOperativistas = 0.5
-  const mitadInversionistas = 0.5
-
-  const totalCapitalInversionistas = inversionistas.reduce(
-    (acc, item) => acc + Number(item.aportacion_capital || 0),
-    0
-  )
-
-  const sociosCalculados = partnerRows.map((partner) => {
+    // 50% del fondo → operativistas (partes iguales entre ellos)
+    // 50% del fondo → inversionistas (proporcional a su capital)
     let porcentajeFinal = 0
-
     if (partner.rol === 'operativista') {
-      porcentajeFinal =
-        operativistas.length > 0 ? mitadOperativistas / operativistas.length : 0
+      porcentajeFinal = operativistas.length > 0
+        ? 0.5 / operativistas.length
+        : 0
     } else {
-      const porcentajeCapitalInv =
-        totalCapitalInversionistas > 0
-          ? Number(partner.aportacion_capital || 0) / totalCapitalInversionistas
-          : 0
-
-      porcentajeFinal = porcentajeCapitalInv * mitadInversionistas
+      const porcCapital = totalCapitalInversionistas > 0
+        ? Number(partner.aportacion_capital || 0) / totalCapitalInversionistas
+        : 0
+      porcentajeFinal = porcCapital * 0.5
     }
 
-    const porcentajeCapitalGlobal =
-      fondoAportacionesBruto > 0
-        ? (Number(partner.aportacion_capital || 0) / fondoAportacionesBruto) * 100
-        : 0
+    const porcentajeCapitalGlobal = totalAportado > 0
+      ? (Number(partner.aportacion_capital || 0) / totalAportado) * 100
+      : 0
 
-    const parteGanancias = partner.fondoGananciasDesdeIngreso * porcentajeFinal
+    const parteGanancias = fondoGananciasDesdeIngreso * porcentajeFinal
 
     const retirosRegistrados = movements
       .filter((m) => m.socio_id === partner.id && m.fondo === 'ganancias')
       .reduce((acc, m) => acc + Number(m.monto || 0), 0)
 
-    const retiradoBase = Number(partner.retirado_ganancias || 0)
-    const retiradoTotal = retiradoBase + retirosRegistrados
+    const retiradoTotal  = Number(partner.retirado_ganancias || 0) + retirosRegistrados
     const saldoPorCobrar = parteGanancias - retiradoTotal
 
     return {
       ...partner,
-      porcentajeCapital: porcentajeCapitalGlobal,
-      porcentajeFinal: porcentajeFinal * 100,
-      bonoOperativista:
-        partner.rol === 'operativista' ? mitadOperativistas * 100 : 0,
+      porcentajeCapital:   porcentajeCapitalGlobal,
+      porcentajeFinal:     porcentajeFinal * 100,
+      bonoOperativista:    partner.rol === 'operativista' ? 50 : 0,
       parteGanancias,
-      reinversionAsignada: partner.reinversionDesdeIngreso * porcentajeFinal,
+      reinversionAsignada: reinversionDesdeIngreso * porcentajeFinal,
       retiradoTotal,
       saldoPorCobrar,
     }
